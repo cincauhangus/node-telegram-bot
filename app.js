@@ -16,16 +16,16 @@ var bot = new TelegramBot({
     }
 });
 
-bot.on('botstarted', function () {
-    console.log('TelegramBot started');
+bot.on('bot-started', function () {
+    console.log('TelegramBot started.');
 });
 
-bot.on('botstarting', function () {
-    console.log('TelegramBot starting');
+bot.on('bot-starting', function () {
+    console.log('TelegramBot starting.');
 });
 
-bot.on('pluginsloading', function (plugins) {
-    console.log('TelegramBot plugins:', plugins)
+bot.on('plugins-loaded', function (plugins) {
+    console.log('TelegramBot plugins loaded:', plugins)
 })
 
 bot.start();
