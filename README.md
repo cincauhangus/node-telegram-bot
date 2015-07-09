@@ -35,7 +35,7 @@ Start up events are emitted in the following order:
 6. Message type events
 
 #### Payload type events
-One of the following may be emitted depending on the type of payload received. The original <a href="https://core.telegram.org/bots/api#message">Message</a> object and the Telegram client is returned with each event. For `received-reply` event, the `reply_to_message` property is provided as the first parameter.
+One of the following may be emitted depending on the type of payload received. The original <a href="https://core.telegram.org/bots/api#message">Message</a> object and the Telegram client is returned with each event. For `received-reply` event, the `reply_to_message` property from the <a href="https://core.telegram.org/bots/api#message">Message</a> object is provided as the first parameter.
 
 1. `received-service-notification`
 2. `received-message`
