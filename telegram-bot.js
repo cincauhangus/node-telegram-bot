@@ -23,7 +23,7 @@ var TelegramBot = function (params) {
     me._plugins = {};
     
     me.start = function () {
-        me.emit('botstarting');
+        me.emit('bot-starting');
         me.tgClient = new TelegramApi(params);
         
         me.tgClient.getMe(function (err, msg) {
@@ -33,7 +33,7 @@ var TelegramBot = function (params) {
             
             me.tgClient.on('message', payloadHandler);
             startPlugins();
-            me.emit('botstarted', me.tgClient);
+            me.emit('bot-started', me.tgClient);
             
 //             me.on('spam-ok', messageHandler);
         });
@@ -102,8 +102,8 @@ var TelegramBot = function (params) {
     }
 
     var startPlugins = function () {
-        var plugins = RequireDir('./plugins');        
-        me.emit("pluginsloading", Object.keys(plugins), plugins);
+        var plugins = RequireDir('./plugins');
+        me.emit("plugins-loading", Object.keys(plugins), plugins);
         for (var key in plugins) {
             try {
                 var plugin = plugins[key];
@@ -118,7 +118,7 @@ var TelegramBot = function (params) {
                 logger.warn("PLUGIN FAILED", {plugin_name: key, error:err.message});
             }
         }        
-        me.emit("pluginsloaded");
+        me.emit("plugins-loaded", Object.keys(me._plugins), me._plugins);
     }
     
     var isServiceNotification = function (msg) {
@@ -152,7 +152,7 @@ var TelegramBot = function (params) {
     
         /* message type events */
         if (isServiceNotification(msg)) {
-            me.emit('recieved-service-notification', msg, me.tgClient);
+            me.emit('received-service-notification', msg, me.tgClient);
         } else {
             me.emit('received-message', msg, me.tgClient);   
         
