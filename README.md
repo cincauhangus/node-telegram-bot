@@ -23,7 +23,7 @@ A sample plugin can be found in the `./plugins` folder.
 The bot utilizes <a href="https://github.com/winstonjs/winston">Winston</a> logger to log chats and errors. Chat and `info` logs will end up in `./logs/chat.log` while `warn` and `error` will be output via `STDIN`.
 
 ## Events
-#### Bot startup
+### Bot startup
 Start up events are emitted in the following order: 
 
 1. `bot-starting`
@@ -31,8 +31,10 @@ Start up events are emitted in the following order:
 3. `plugins-loading`
   1. `plugin-PLUGIN_NAME-loaded`
 4. `plugins-loaded`
+5. Payload type events
+6. Message type events
 
-#### Payload type handlers
+#### Payload type events
 One of the following may be emitted depending on the type of payload received. The original <a href="https://core.telegram.org/bots/api#message">Message</a> object and the Telegram client is returned with each event. For `received-reply` event, the `reply_to_message` property is provided as the first parameter.
 
 1. `received-service-notification`
@@ -40,7 +42,7 @@ One of the following may be emitted depending on the type of payload received. T
 3. `received-forward`
 4. `received-reply`
 
-#### Message handlers
+#### Message type events
 One of the following may be emitted depending on the type of message received. The message, the original Message object and the Telegram client is returned with each event.
 
 1. `text-message`
