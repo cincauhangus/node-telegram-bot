@@ -14,7 +14,7 @@ var logger = new (winston.Logger)({
     },
     transports: [
       new (winston.transports.Console)({ level: 'warn' }),
-      new (winston.transports.File)({ name:'chat-log', filename: 'logs/chat.log', level: 'chat' })
+      new (winston.transports.File)({ name:'chat-log', filename: 'logs/chat.log', level: 'info' })
     ]
   });
 var TelegramBot = function (params) {
@@ -35,29 +35,69 @@ var TelegramBot = function (params) {
             startPlugins();
             me.emit('botstarted', me.tgClient);
             
-            me.on('text-message', plainMessageHandler);
+//             me.on('spam-ok', messageHandler);
         });
     } 
     
-    me.spamHandler = function (msg) {}
+//     me.spamLimit = 3;
+//     me.spamDuration = 15; //seconds
+//     me.banDuration = 60; //seconds
+//     me.spamHandler = function (msg) {
+//         me.spamCounter = me.spamCounter || {};
+//         var template = {firstMsg: 0, countSince: 0};
+//         var id = msg.from.id+msg.chat.id;
+//         
+//         if (!me.spamCounter[id]) {
+//             me.spamCounter[id] = template;
+//         }
+// 
+//         if (msg.date-me.spamCounter[id].firstMsg < me.spamDuration) {
+//             me.spamCounter[id].countSince++;
+//         } else if (me.spamCounter[id].countSince > me.spamLimit && 
+//             msg.date-me.spamCounter[id].firstMsg < me.banDuration) {
+//             me.spamCounter[id].countSince++;
+//         } else {
+//             me.spamCounter[id] = template;
+//             me.spamCounter[id].firstMsg = msg.date;
+//         }
+// 
+//         if (me.spamCounter[id].countSince > me.spamLimit) {
+//             var payload = {
+//                 who:msg.from.id, 
+//                 where:msg.chat.id, 
+//                 count:me.spamCounter[id].countSince, 
+//                 started:me.spamCounter[id].firstMsg, 
+//                 last:msg.date
+//             };
+//             me.emit('spam-found', payload, msg);
+//             return;
+//         }
+//         return msg;
+//     }
     
     var plainMessageHandler = function (text, msg, client) {
         function processRegex(regex, plugin) {
             var matches = text.match(regex);
-            if (util.isArray(matches)) plugin.regexHandler(matches, msg, client);
+            if (util.isArray(matches)) {
+                plugin.regexHandler(matches, msg, client);
+            }
         };
+
         for (var key in me._plugins) {
-            var plugin = me._plugins[key];
-            if (util.isRegExp(plugin.regex)) {
-                processRegex(plugin.regex, plugin);
-            } else if (util.isArray(plugin.regex)) {
-                for (var i=0;i<plugin.regex.length;i++) {
-                    if (util.isRegExp(plugin.regex[i])) {
-                        processRegex(plugin.regex[i], plugin);
+            try {
+                var plugin = me._plugins[key];
+                if (util.isRegExp(plugin.regex)) {
+                    processRegex(plugin.regex, plugin);
+                } else if (util.isArray(plugin.regex)) {
+                    for (var i=0;i<plugin.regex.length;i++) {
+                        if (util.isRegExp(plugin.regex[i])) {
+                            processRegex(plugin.regex[i], plugin);
+                        }
                     }
                 }
+            } catch (e) {
+                logger.warn("PLUGIN FAILED", {plugin_name:key, error:"Unable to execute RegExp on plainMessageHandler"});
             }
-            
         }
     }
 
@@ -67,7 +107,7 @@ var TelegramBot = function (params) {
         for (var key in plugins) {
             try {
                 var plugin = plugins[key];
-                if (plugin.init || plugin.regex) {
+                if (plugin.init || (plugin.regex && plugin.regexHandler)) {
                     plugin.init && plugin.init(me);
                     me._plugins[key] = plugin;
                     me.emit("plugin-"+key+"-loaded");
@@ -94,7 +134,21 @@ var TelegramBot = function (params) {
         logger.chat(msg.text, {payload:msg, msg_timestamp:msg.date, user:msg.from.username, chat:msg.chat.id});
     
         /* spam handler */
-        me.spamHandler(msg);
+//         var msg_clone = msg;
+//         me.emit('spam-checking', msg);
+//         msg = me.spamHandler(msg);
+//         if (!msg) {
+//             me.emit('spam-detected', msg_clone);
+//             return;
+//         }
+//         me.emit('spam-ok', msg);
+        
+        messageHandler(msg);
+    };
+    
+    var messageHandler = function (msg) {
+        /* validate intended recipient & strip off */
+        
     
         /* message type events */
         if (isServiceNotification(msg)) {
@@ -114,6 +168,7 @@ var TelegramBot = function (params) {
         /* message content events */
         if (msg.text) {
             me.emit('text-message', msg.text, msg, me.tgClient);
+            plainMessageHandler(msg.text, msg, me.tgClient);
         }
         
         if (msg.document) {
