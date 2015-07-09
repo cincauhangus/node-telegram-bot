@@ -1,10 +1,10 @@
 # node-telegram-bot
-A event driven plugin based NodeJS Telegram Bot.
+An event driven plugin based NodeJS Telegram Bot.
 
 ## Quick Start
-To start, set up a bot from <a href="http://telegram.me/botfather">@BotFather</a> and store the key in an environment variable `$TELEGRAM_TOKEN` or alternatively edit the key in app.js. Then run `node app.js` or alternatively `nodemon`.
+To start, set up a bot from <a href="http://telegram.me/botfather">@BotFather</a> and store the key in an environment variable `$TELEGRAM_TOKEN` or alternatively edit the key in `app.js`. Then run `node app.js` or alternatively `nodemon` to begin.
 
-Make sure you get the npm packages first via `npm install`.
+Make sure you get the npm packages first via `npm install`!
 
 ## Advanced Configuration
 node-telegram-bot utilizes <a href="https://github.com/mast/telegram-bot-api">telegram-bot-api</a> by mast, therefore expects the same parameters to the bot. You can change the default parameters in `app.js`.
@@ -15,7 +15,9 @@ This bot utilizes plugins to extend its features. They are stored as `*.js` file
 1. An `init` function that is called when the bot is started
 2. An array of `regex` & a `regexHandler` to handle incoming matches. 
 
-Both can be used either or both at the same time. The only downside of using `regex` and `regexHandler` is that it's only called when a text message is received. 
+Both can be used either or both at the same time. The only difference is that `regex` and `regexHandler` are only called after the `text-message` event is emitted.
+
+A sample plugin can be found in the `./plugins` folder. 
 
 ## Logging
 The bot utilizes <a href="https://github.com/winstonjs/winston">Winston</a> logger to log chats and errors. Chat and `info` logs will end up in `./logs/chat.log` while `warn` and `error` will be output via `STDIN`.
