@@ -17,7 +17,7 @@ This bot utilizes plugins to extend its features. They are stored as `*.js` file
 
 Both can be used either or both at the same time. The only difference is that `regex` and `regexHandler` are only called after the `text-message` event is emitted.
 
-A sample plugin can be found in the `./plugins` folder. 
+As reference, read <a href="https://core.telegram.org/bots/api">Telegram Bots API</a> and <a href="https://github.com/mast/telegram-bot-api">telegram-bot-api</a>. Sample plugins can be found in the `./plugins` folder. 
 
 ## Logging
 The bot utilizes <a href="https://github.com/winstonjs/winston">Winston</a> logger to log chats and errors. Chat and `info` logs will end up in `./logs/chat.log` while `warn` and `error` will be output via `STDIN`.
